@@ -7,6 +7,8 @@
 #include <netdb.h>
 #include <pthread.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #define PORT 8000
 #define MAXLINE 4096
@@ -15,6 +17,7 @@ int  client_sock;
 struct sockaddr_in addr;
 void *sendmessage();
 void *listener();
+void *handle_connection();
 int done=1; 
 
 int main(){
@@ -41,66 +44,49 @@ if(bind(server_sock,(struct sockaddr*)&addr,sizeof(addr)) == -1){
   return 1;
 }
 
-if(listen(server_sock,1) == -1){
+if(listen(server_sock,4) == -1){
   printf("Listening error!\n");
   return 1;
 }
 
-printf("Waiting client to connect on port %d...\n", PORT);
+while(1){
+  printf("Waiting client to connect on port %d...\n", PORT);
 
-client_sock = accept(server_sock, (struct sockaddr_in*)&cli_addr, &cli_addr_len);
+  client_sock = accept(server_sock, (struct sockaddr_in*)&cli_addr, &cli_addr_len);
 
-if(client_sock == -1){
-  printf("Client not accepted!\n");
-  return 1;
+  if(client_sock == -1){
+    printf("Client not accepted!\n");
+    return 1;
+  }
+
+  inet_ntop(AF_INET, &cli_addr, cli_address, MAXLINE);
+  printf("Client %s connected\n", cli_address);
+
+  void* retval;
+  int* pclient = malloc(sizeof(int));
+  *pclient = client_sock;
+
+  pthread_t t;
+  
+  pthread_attr_t attr;
+  pthread_attr_init(&attr);
+  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+  pthread_create(&t, &attr, handle_connection, pclient);
 }
 
-inet_ntop(AF_INET, &cli_addr, cli_address, MAXLINE);
-printf("Client %s connected\n", cli_address);
 
-pthread_t threads[2];
-
-void *status;
-
-pthread_attr_t attr;
-pthread_attr_init(&attr);
-pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-
-pthread_create(&threads[0], &attr, sendmessage, NULL);
-pthread_create(&threads[1], &attr, listener, NULL);
-
-
-
-while(done){}
         
 return 0;
 
 }
 
-void *sendmessage(){
-    int  sended;
-    char msg[256];
+void* handle_connection(void* p_client_sock){
+  int client_sock = *(int*)p_client_sock;
+  free(p_client_sock);
+  char txt[14];
 
-    do
-    {  
-        printf("Server: ");
-        fgets(msg,256,stdin);
-        msg[strlen(msg)-1] = '\0';
-        sended = send(client_sock,msg,strlen(msg),0);
-
-    }while(strcmp(msg,"exit")!=0);
-}
-
-void *listener(){
-    int received;
-    char answer[256];
-    do
-    {
-        received = recv(client_sock,answer,256,0);              /* Recebe mensagem do cliente */
-        answer[received] = '\0';
-        printf("Cliente: %s\n",answer);
-    }while(strcmp(answer,"exit")!=0); 
-    	
-    pthread_exit(NULL);
-    done=0;
+  while(recv(client_sock, txt, 14, 0)>0){
+    printf("%s%d\n", txt, client_sock);
+  }
 }

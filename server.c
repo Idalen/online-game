@@ -8,18 +8,23 @@
 #include <pthread.h>
 #include <string.h>
 
+#define PORT 8000
+#define MAXLINE 4096
 
 int  client_sock;
 struct sockaddr_in addr;
-pthread_mutex_t mutexsum = PTHREAD_MUTEX_INITIALIZER;  
 void *sendmessage();
 void *listener();
 int done=1; 
 
-int main()
-{ 
+int main(){
+
 int server_sock;
 server_sock = socket(AF_INET,SOCK_STREAM,0);
+
+struct sockaddr_in cli_addr;
+socklen_t cli_addr_len;
+char cli_address[MAXLINE+1];
 
 if(server_sock == -1){
   printf("Error creating socket\n");
@@ -27,7 +32,7 @@ if(server_sock == -1){
 }
 
 addr.sin_family      = AF_INET;
-addr.sin_port        = htons(1234);
+addr.sin_port        = htons(PORT);
 addr.sin_addr.s_addr = INADDR_ANY;
 memset(&addr.sin_zero,0,sizeof(addr.sin_zero));
 
@@ -41,16 +46,17 @@ if(listen(server_sock,1) == -1){
   return 1;
 }
 
-printf("Waiting client to connect...\n");
+printf("Waiting client to connect on port %d...\n", PORT);
 
-client_sock = accept(server_sock,0,0);
+client_sock = accept(server_sock, (struct sockaddr_in*)&cli_addr, &cli_addr_len);
 
 if(client_sock == -1){
   printf("Client not accepted!\n");
   return 1;
 }
 
-printf("Client connected\n");
+inet_ntop(AF_INET, &cli_addr, cli_address, MAXLINE);
+printf("Client %s connected\n", cli_address);
 
 pthread_t threads[2];
 
@@ -67,7 +73,6 @@ pthread_create(&threads[1], &attr, listener, NULL);
 
 while(done){}
         
-
 return 0;
 
 }
@@ -96,7 +101,6 @@ void *listener(){
         printf("Cliente: %s\n",answer);
     }while(strcmp(answer,"exit")!=0); 
     	
-    pthread_mutex_destroy(&mutexsum);
     pthread_exit(NULL);
     done=0;
 }

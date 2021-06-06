@@ -7,8 +7,9 @@
 #include <pthread.h>
 #include <string.h>
 
+#define PORT 8000
+
 int client_sock;
-pthread_mutex_t mutexsum = PTHREAD_MUTEX_INITIALIZER;  
 struct sockaddr_in addr;
 void *sendmessage();
 void *listener();
@@ -24,7 +25,7 @@ if(client_sock == -1){
 }
 
 addr.sin_family      = AF_INET;
-addr.sin_port        = htons(1234);
+addr.sin_port        = htons(PORT);
 addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
 memset(&addr.sin_zero,0,sizeof(addr.sin_zero));
@@ -67,7 +68,6 @@ void *sendmessage(){
 
     }while(strcmp(msg,"exit")!=0);
 
-    pthread_mutex_destroy(&mutexsum);
     pthread_exit(NULL);
     close(client_sock);         
     done=0;

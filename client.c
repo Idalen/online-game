@@ -38,7 +38,7 @@ int main(){
         printf("Cliente: ");
         fgets(message,256,stdin);
         message[strlen(message)-1] = '\0';
-        sended = send(client_socket, message, strlen(message),0);  
+        sended = send(client_socket, message, strlen(message), 0);  
 
 
         received = recv(client_socket,respond,256,0);

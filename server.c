@@ -12,6 +12,7 @@ int main(){
     int    server_socket;
     int    client_socket;
     struct sockaddr_in addr;
+    int addrlen = sizeof(addr);
 
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
     
@@ -30,9 +31,7 @@ int main(){
         return 1;
     }
 
-    client_socket = accept(server_socket, (struct sockaddr*)&addr, sizeof(addr));
-
-    if(client_socket < 0){
+    if(client_socket = accept(server_socket, (struct sockaddr*) &addr, (socklen_t*)&addrlen) < 0){
         printf("Client not accepted\n");
         return 1;
     }

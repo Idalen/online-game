@@ -44,7 +44,7 @@ char respond[256];
 
 do { 
 
-    received = recv(client_socket,respond,256,0);              /* Recebe mensagem do cliente */
+    received = recv(client_socket, respond, 256, 0);              /* Recebe mensagem do cliente */
     respond[received] = '\0';                                 /* Finaliza a string com o caractere NULO */
     printf("Cliente: %s\n",respond); 	       	              /* Mostra a mensagem do cliente */    
     printf("Servidor: ");                                       /* Simplesmente informa que deve-se preencher uma mensagem */

@@ -6,11 +6,47 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <pthread.h>
+
+int client_socket;
+pthread_mutex_t mutexsum = PTHREAD_MUTEX_INITIALIZER;  
+struct sockaddr_in addr;
+int done = 1;
+
+//--------------------------------------------------------------------------------------------------//
+
+void *sendmessage(){
+    int  submitted;
+    char message[256];
+    do{  
+        printf("Cliente: ");
+        fgets(message,256,stdin);
+        message[strlen(message)-1] = '\0';
+        submitted = send(client_socket ,message,strlen(message),0);
+
+    }while(strcmp(message,"exit")!=0);
+
+	pthread_mutex_destroy(&mutexsum);
+	pthread_exit(NULL);
+	close(client_socket);         
+	done=0;
+}
+
+//--------------------------------------------------------------------------------------------------//
+
+void *listener(){
+    int received;
+    char respond[256];
+    do{
+        received = recv(client_socket,respond,256,0);
+        respond[received] = '\0';
+        printf("Servidor: %s\n",respond);
+    }while(received != -1); 
+}
+
+//--------------------------------------------------------------------------------------------------//
 
 int main(){
-
-    int client_socket;
-    struct sockaddr_in addr;
 
     client_socket   = socket(AF_INET, SOCK_STREAM, 0); //socket TCP
 
@@ -28,27 +64,17 @@ int main(){
 
     printf("Connected!\n\n");
 
-    int received, sended;
-    char message[256];
-    char respond[256];
+    pthread_t threads[2];
+    void *status;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
+    pthread_create(&threads[0], &attr, sendmessage, NULL);
+    pthread_create(&threads[1], &attr, listener, NULL);
 
-    do {
-  
-        printf("Cliente: ");
-        fgets(message,256,stdin);
-        message[strlen(message)-1] = '\0';
-        sended = send(client_socket, message, strlen(message), 0);  
-
-
-        received = recv(client_socket,respond,256,0);
-        respond[received] = '\0';
-        printf("Servidor: %s\n",respond);
-
-
-    }while(sended != -1);
-
+    while(done){}
 
     return 0;
-
 }
+

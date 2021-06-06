@@ -6,12 +6,48 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <pthread.h>
 
+int client_socket;
+struct sockaddr_in addr;
+pthread_mutex_t mutexsum = PTHREAD_MUTEX_INITIALIZER; 
+int done = 1;
+
+//--------------------------------------------------------------------------------------------------//
+
+void *sendmessage(){
+    int  submitted;
+    char message[256];
+
+    do{  
+      printf("Server: ");
+      fgets(message,256,stdin);
+      message[strlen(message)-1] = '\0';
+      submitted = send(client_socket,message,strlen(message),0);
+    }while(strcmp(message,"exit")!=0);
+}
+
+//--------------------------------------------------------------------------------------------------//
+
+void *listener(){
+    int received;
+    char respond[256];
+    
+    do{
+        received = recv(client_socket,respond, 256, 0);              /* Recebe mensagem do cliente */
+        respond[received] = '\0';
+        printf("Cliente: %s\n",respond);
+    }while(strcmp(respond,"exit")!=0); 
+    
+    pthread_mutex_destroy(&mutexsum);
+    pthread_exit(NULL);
+    done=0;
+}
+
+//--------------------------------------------------------------------------------------------------//
 
 int main(){
-    int    server_socket;
-    int    client_socket;
-    struct sockaddr_in addr;
+    int server_socket;
     int addrlen = sizeof(addr);
 
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -31,6 +67,7 @@ int main(){
         return 1;
     }
 
+    printf("Waiting for client\n");
     if(client_socket = accept(server_socket, (struct sockaddr*) &addr, (socklen_t*)&addrlen) < 0){
         printf("Client not accepted\n");
         return 1;
@@ -38,24 +75,16 @@ int main(){
 
     printf("Client connected!\n");
 
-int received, sended;
-char message[256];
-char respond[256];
+    pthread_t threads[2];
+    void *status;
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-do { 
+    pthread_create(&threads[0], &attr, sendmessage, NULL);
+    pthread_create(&threads[1], &attr, listener, NULL);
 
-    received = recv(client_socket, respond, 256, 0);              /* Recebe mensagem do cliente */
-    respond[received] = '\0';                                 /* Finaliza a string com o caractere NULO */
-    printf("Cliente: %s\n",respond); 	       	              /* Mostra a mensagem do cliente */    
-    printf("Servidor: ");                                       /* Simplesmente informa que deve-se preencher uma mensagem */
-    fgets(message,256,stdin);                                  /* Obtém uma mensagem digitada */
-    message[strlen(message)-1] = '\0';                        /* Finaliza a string */
-    sended = send(client_socket,message,strlen(message),0);  /* Envia a string */
-
-}while(sended != -1 ); /* ... enquanto as funções send() e recv() não retornarem -1 = ERRO */
-
-close(client_socket);         
-close(server_socket);      
-
+    while(done){}
+             
 return 0;
 }

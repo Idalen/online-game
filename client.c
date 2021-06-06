@@ -1,80 +1,87 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <pthread.h>
+#include <string.h>
 
-int client_socket;
+int client_sock;
 pthread_mutex_t mutexsum = PTHREAD_MUTEX_INITIALIZER;  
 struct sockaddr_in addr;
-int done = 1;
-
-//--------------------------------------------------------------------------------------------------//
-
-void *sendmessage(){
-    int  submitted;
-    char message[256];
-    do{  
-        printf("Cliente: ");
-        fgets(message,256,stdin);
-        message[strlen(message)-1] = '\0';
-        submitted = send(client_socket ,message,strlen(message),0);
-
-    }while(strcmp(message,"exit")!=0);
-
-	pthread_mutex_destroy(&mutexsum);
-	pthread_exit(NULL);
-	close(client_socket);         
-	done=0;
-}
-
-//--------------------------------------------------------------------------------------------------//
-
-void *listener(){
-    int received;
-    char respond[256];
-    do{
-        received = recv(client_socket,respond,256,0);
-        respond[received] = '\0';
-        printf("Servidor: %s\n",respond);
-    }while(received != -1); 
-}
-
-//--------------------------------------------------------------------------------------------------//
+void *sendmessage();
+void *listener();
+int done=1; 
 
 int main(){
 
-    client_socket   = socket(AF_INET, SOCK_STREAM, 0); //socket TCP
+client_sock = socket(AF_INET,SOCK_STREAM,0);
 
-    addr.sin_family         = AF_INET;
-    addr.sin_port           = htons(4143); 
-    addr.sin_addr.s_addr    = inet_addr("127.0.0.1"); // servidor local
-    memset(&addr.sin_zero, 0, sizeof(addr.sin_zero));
-
-    printf("Connectiong to server...\n");
-
-    if(connect(client_socket,(struct sockaddr_in*)& addr, sizeof(addr)) < 0){
-        printf("Connection error... Try again later.\n");
-        return 1;
-    }
-
-    printf("Connected!\n\n");
-
-    pthread_t threads[2];
-    void *status;
-    pthread_attr_t attr;
-    pthread_attr_init(&attr);
-    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-
-    pthread_create(&threads[0], &attr, sendmessage, NULL);
-    pthread_create(&threads[1], &attr, listener, NULL);
-
-    while(done){}
-
-    return 0;
+if(client_sock == -1){
+    printf("Error creating socket\n");
+    return 1;
 }
 
+addr.sin_family      = AF_INET;
+addr.sin_port        = htons(1234);
+addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+
+memset(&addr.sin_zero,0,sizeof(addr.sin_zero));
+
+printf("Connecting to server...\n");
+
+if(connect(client_sock,(struct sockaddr*)&addr,sizeof(addr)) == -1){
+  printf("Can't connect.\n");
+  return 1;
+}
+
+printf("Client connected!\n\n");
+
+pthread_t threads[2];
+
+void *status;
+
+pthread_attr_t attr;
+pthread_attr_init(&attr);
+pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+pthread_create(&threads[0], &attr, sendmessage, NULL);
+pthread_create(&threads[1], &attr, listener, NULL);
+
+while(done){}
+
+return 0;
+
+}
+
+void *sendmessage(){
+    int  sended;
+    char msg[256];
+
+    do{  
+        printf("Cliente: ");
+        fgets(msg,256,stdin);
+        msg[strlen(msg)-1] = '\0';
+        sended = send(client_sock,msg,strlen(msg),0);
+
+    }while(strcmp(msg,"exit")!=0);
+
+    pthread_mutex_destroy(&mutexsum);
+    pthread_exit(NULL);
+    close(client_sock);         
+    done=0;
+}
+
+void *listener(){
+    int received;
+    char answer[256];
+
+    do{
+
+        received = recv(client_sock,answer,256,0);
+        answer[received] = '\0';
+        printf("\n Servidor: %s\n",answer);
+
+    }while(received != -1); 
+}

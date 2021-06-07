@@ -13,15 +13,20 @@
 #define PORT 8000
 #define MAXLINE 4096
 
-int  client_sock;
-struct sockaddr_in addr;
-void *sendmessage();
-void *listener();
+typedef struct user_info{
+  char* client_adress;
+  int client_socket;
+  int user_id;
+  int* pos;
+  int* ready; 
+} user_info;
+
 void *handle_connection();
-int done=1; 
 
 int main(){
 
+  int  client_sock;
+  struct sockaddr_in addr;
   int server_sock;
   server_sock = socket(AF_INET,SOCK_STREAM,0);
 
@@ -56,8 +61,11 @@ int main(){
     return 1;
   }
 
+  printf("Waiting client to connect on port %d...\n", PORT);
+  int users = 0;
+  int *pos = malloc(4*sizeof(int)), *ready = malloc(4*sizeof(int));
+
   while(1){
-    printf("Waiting client to connect on port %d...\n", PORT);
 
     client_sock = accept(server_sock, (struct sockaddr_in*)&cli_addr, &cli_addr_len);
 
@@ -69,8 +77,12 @@ int main(){
     inet_ntop(AF_INET, &cli_addr, cli_address, MAXLINE);
     printf("Client %s connected\n", cli_address);
 
-    int* pclient = malloc(sizeof(int));
-    *pclient = client_sock;
+    user_info *p_info = malloc(sizeof(user_info));
+    p_info->client_adress = cli_address;
+    p_info->client_socket = client_sock;
+    p_info->user_id       = ++users;
+    p_info->pos           = pos;
+    p_info->ready         = ready;
 
     pthread_t t;
 
@@ -78,7 +90,7 @@ int main(){
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-    pthread_create(&t, &attr, handle_connection, pclient);
+    pthread_create(&t, &attr, handle_connection, p_info);
   }
 
 
@@ -86,11 +98,18 @@ int main(){
 
 }
 
-void* handle_connection(void* p_client_sock){
+void* handle_connection(void* p_info){
   
   int byte_rec, byte_send, seed = -1, result, user_pos = 0;
-  int client_sock = *(int*)p_client_sock;
-  free(p_client_sock);
+  
+  user_info info = *(user_info*) p_info;
+  free(p_info);
+
+  char* client_adress = info.client_adress;
+  int client_sock = info.client_socket;
+  int user_id = info.user_id;
+  int* pos = info.pos;
+  int* ready = info.ready;   
   
   
   byte_send = send(client_sock, &client_sock, sizeof(int), 0);

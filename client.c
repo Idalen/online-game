@@ -10,8 +10,6 @@
 
 #define PORT 8000
 
-void* sendMessage();
-
 int main(){
 
 int client_sock = socket(AF_INET,SOCK_STREAM,0);
@@ -38,14 +36,23 @@ if(connect(client_sock,(struct sockaddr*)&addr,sizeof(addr)) == -1){
 
 printf("Client connected!\n\n");
 
+int bytes_rec, bytes_send, id, pos=0, seed;
+bytes_rec = recv(client_sock, &id, sizeof(int), 0);
 
-char message[] = "HELLO THERE!\0";
+printf("You are horse %d\n", id);
 
-while(send(client_sock, message, strlen(message), 0) > 0){
-    sleep(1);
+while(1){
+  do
+  {
+    scanf("%d", &seed);
+    bytes_send = send(client_sock, &seed, sizeof(int), 0);
+
+    bytes_rec = recv(client_sock, &pos, sizeof(int), 0);
+    printf("Your current position is %d\n", pos);
+
+  }while(bytes_rec != -1);
+
 }
-
 return 0;
-
 }
 

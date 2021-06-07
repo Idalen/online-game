@@ -102,13 +102,13 @@ int main(){
 
   while(1) {
 
-    if( playersAreReady(ready) /* && !ready */ ) {
+    if( playersAreReady(ready) /* && !(*ready) */ ) {
 
-      // ready = 1;
+      // *ready = 1;
 
-    } else if( !playersAreReady(ready) /* && ready */ ) {
+    } else if( !playersAreReady(ready) /* && (*ready) */ ) {
 
-      // ready = 0;
+      // *ready = 0;
 
     }
 

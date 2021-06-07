@@ -22,7 +22,8 @@ typedef struct user_info{
   int client_socket;
   int user_id;
   int* pos;
-  int* ready; 
+  int* is_ready; 
+  int* ready
 } user_info;
 
 void *handle_connection();
@@ -68,7 +69,10 @@ int main(){
 
   printf("Waiting client to connect on port %d...\n", PORT);
   int users = 0;
-  int *pos = malloc(4*sizeof(int)), *ready = malloc(4*sizeof(int));
+  int *pos = malloc(4*sizeof(int)), *is_ready = malloc(4*sizeof(int)), *ready = malloc(sizeof(int));
+  memset(pos, 0, sizeof(int)*4);
+  memset(pos, 0, sizeof(int)*4);
+  *ready = 0;
 
   while(users < JOGADORES){
 
@@ -87,7 +91,8 @@ int main(){
     p_info->client_socket = client_sock;
     p_info->user_id       = ++users;
     p_info->pos           = pos;
-    p_info->ready         = ready;
+    p_info->is_ready      = is_ready;
+    p_info->ready          = ready;
 
     pthread_t t;
 
@@ -121,32 +126,32 @@ int main(){
 
 void* handle_connection(void* p_info){
   
-  int byte_rec, byte_send, seed = -1, result, user_pos = 0;
+  int byte_len, seed = -1, result;
   
   user_info info = *(user_info*) p_info;
   free(p_info);
 
   char* client_adress = info.client_adress;
   int client_sock = info.client_socket;
-  int user_id = info.user_id;
+  int id = info.user_id;
   int* pos = info.pos;
-  int* ready = info.ready;   
+  int* is_ready = info.is_ready;   
   
   
-  byte_send = send(client_sock, &client_sock, sizeof(int), 0);
+  byte_len = send(client_sock, &client_sock, sizeof(int), 0);
 
   do
   {
-    byte_rec = recv(client_sock, &seed, sizeof(int), 0);
+    byte_len = recv(client_sock, &seed, sizeof(int), 0);
     
     srand(seed);
     result = rand()%6 + 1;
-    user_pos+=result;
+    pos[id]+=result;
 
-    byte_send = send(client_sock, &user_pos, sizeof(int), 0);
-    printf("Client %d new pos = %d, seed = %d, dice_result = %d\n", client_sock, user_pos, seed, result);
+    byte_len = send(client_sock, pos+id, sizeof(int), 0);
+    printf("Client %d new pos = %d, seed = %d, dice_result = %d\n", client_sock, pos[id], seed, result);
 
-  }while (byte_rec != (int) 'q');
+  }while (byte_len != (int) 'q');
   
 }
 

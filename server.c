@@ -93,7 +93,7 @@ int main(){
     p_info->user_id       = users++;
     p_info->pos           = pos;
     p_info->is_ready      = is_ready;
-    p_info->ready          = ready;
+    p_info->ready         = ready;
 
     pthread_t t;
 
@@ -149,7 +149,7 @@ void* handle_connection(void* p_info){
     byte_len = recv(client_sock, &seed, sizeof(int), 0);
     
     srand(seed);
-    result = rand() + 1;
+    result = rand()%6 + 1;
     pos[id]+=result;
 
     byte_len = send(client_sock, pos+id, sizeof(int), 0);

@@ -13,6 +13,10 @@
 #define PORT 8000
 #define MAXLINE 4096
 
+#define JOGADORES 4
+#define CASAS 50
+#define LADOS 6
+
 typedef struct user_info{
   char* client_adress;
   int client_socket;
@@ -22,6 +26,7 @@ typedef struct user_info{
 } user_info;
 
 void *handle_connection();
+int playersAreReady(int *players);
 
 int main(){
 
@@ -65,7 +70,7 @@ int main(){
   int users = 0;
   int *pos = malloc(4*sizeof(int)), *ready = malloc(4*sizeof(int));
 
-  while(1){
+  while(users < JOGADORES){
 
     client_sock = accept(server_sock, (struct sockaddr_in*)&cli_addr, &cli_addr_len);
 
@@ -91,6 +96,22 @@ int main(){
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
     pthread_create(&t, &attr, handle_connection, p_info);
+  }
+
+  printf("Jogo iniciado\n");
+
+  while(1) {
+
+    if( playersAreReady(ready) /* && !ready */ ) {
+
+      // ready = 1;
+
+    } else if( !playersAreReady(ready) /* && ready */ ) {
+
+      // ready = 0;
+
+    }
+
   }
 
 
@@ -127,4 +148,16 @@ void* handle_connection(void* p_info){
 
   }while (byte_rec != (int) 'q');
   
+}
+
+int playersAreReady(int *players) {
+
+  for(int i=0; i<JOGADORES; i++) {
+
+    if( !players[i] ) return 0;
+
+  }
+
+  return 1;
+
 }

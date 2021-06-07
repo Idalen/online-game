@@ -63,16 +63,16 @@ int main(){
     return 1;
   }
 
-  if(listen(server_sock,4) == -1){
+  if(listen(server_sock,JOGADORES) == -1){
     printf("Listening error!\n");
     return 1;
   }
 
   printf("Waiting client to connect on port %d...\n", PORT);
   int users = 0;
-  int *pos = malloc(4*sizeof(int)), *is_ready = malloc(4*sizeof(int)), *ready = malloc(sizeof(int));
-  memset(pos, 0, sizeof(int)*4);
-  memset(pos, 0, sizeof(int)*4);
+  int *pos = malloc(JOGADORES*sizeof(int)), *is_ready = malloc(JOGADORES*sizeof(int)), *ready = malloc(sizeof(int));
+  memset(pos, 0, sizeof(int)*JOGADORES);
+  memset(pos, 0, sizeof(int)*JOGADORES);
   *ready = 0;
 
   while(users < JOGADORES){
@@ -107,7 +107,7 @@ int main(){
   printf("Jogo iniciado\n");
 
   // Runs while there is no winner
-  while( winner(pos) != -1 ) {
+  while( winner(pos) == -1 ) {
 
     // Controls ready state
     if( playersAreReady(ready) && !(*ready) ) {

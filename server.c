@@ -28,6 +28,7 @@ typedef struct user_info{
 
 void *handle_connection();
 int playersAreReady(int *players);
+int winner(int *players);
 
 int main(){
 
@@ -105,20 +106,23 @@ int main(){
 
   printf("Jogo iniciado\n");
 
-  while(1) {
+  // Runs while there is no winner
+  while( winner(pos) != -1 ) {
 
-    if( playersAreReady(ready) /* && !(*ready) */ ) {
+    // Controls ready state
+    if( playersAreReady(ready) && !(*ready) ) {
 
-      // *ready = 1;
+      *ready = 1;
 
-    } else if( !playersAreReady(ready) /* && (*ready) */ ) {
+    } else if( !playersAreReady(ready) && (*ready) ) {
 
-      // *ready = 0;
+      *ready = 0;
 
     }
 
   }
 
+  printf("Vencedor: %d\n", winner(pos));
 
   return 0;
 
@@ -164,5 +168,17 @@ int playersAreReady(int *players) {
   }
 
   return 1;
+
+}
+
+int winner(int *players) {
+
+  for(int i=0; i<JOGADORES; i++) {
+
+    if( players[i] >= CASAS ) return i;
+
+  }
+
+  return -1;
 
 }

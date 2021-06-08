@@ -35,4 +35,4 @@ Feito em Linguagem C, compilador GCC
 
 ## 2.3 Conexão e transmissão de informações
 
-
+Para a transmissão das informações usamos o protocolo TCP/IP

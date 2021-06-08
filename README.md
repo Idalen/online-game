@@ -32,4 +32,4 @@ O cliente, por sua vez, é um usuário que corresponde a um cavalo dentro do jog
 
 ## 2.2 Informações técnicas
 
-Todo o código foi desenvolvido e testado em Manjaro Linux 21.0.6 e Ubuntu LTS 20.04, usando o compilador GCC.
+Todo o código foi desenvolvido e testado em Manjaro Linux 21.0.6 e Ubuntu LTS 20.04, usando o compilador GCC. Ademais, todas as informações são transmitidas entre os *sockets* usando TCP/IP.

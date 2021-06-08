@@ -30,6 +30,7 @@ O jogo aceita exatamente 4 jogadores. O servidor trata o gerenciamento das threa
 ## 2.2 Sistema Operacional e Informações Técnicas
 
 Produzido no Linux, Kernel: 5.9.16-1-MANJARO x86_64
+
 Feito em Linguagem C, compilador GCC
 
 ## 2.3 Conexão e transmissão de informações

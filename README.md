@@ -14,7 +14,7 @@ Marcus Vinicius Santos Rodrigues - 11218862
 
 ## 1.1 Sobre o trabalho
 
-O trabalho funciona atualmente como um jogo randomizado de dados para corrida de cavalos. Como jogador, você insere uma *seed* para seu dado ser randomizado, sendo que esse define quanto seu cavalo irá avançar na pista de corrida. O primeiro cavalo que chegar ao final ganha o jogo, terminando-o.
+O presente trabalho é um jogo randomizado de dados para corrida de cavalos. O jogador insere uma *seed* para seu dado ser randomizado, sendo que esse define quanto seu cavalo irá avançar na pista de corrida. O primeiro cavalo a chegar ao final ganha o jogo, terminando-o.
 
 ## 1.2 Como instalar
 
@@ -26,10 +26,10 @@ O trabalho funciona atualmente como um jogo randomizado de dados para corrida de
 
 ## 2.1 Funcionamento do jogo
 
-O jogo necessita de 4 clientes conectados para iniciar. Para cada cliente, o servidor cria uma nova thread para lidar com cada cliente individualmente, enquanto a thread main lida com informações compartilhadas entre as threads.
-O jogo consiste em uma corrida de cavalos -- cada cavalo sendo um usuário. O usuário precisa inserir um número inteiro pra realizar sua jogada, que será o lançamento virtual de um dado. O cavalo que chegar à linha final primeiro ganha o jogo e o programa é encerrado (ainda com alguns bugs).
+O jogo necessita de 4 clientes conectados para iniciar. O servidor cria uma *thread* para lidar com cada cliente individualmente, enquanto a *main* trabalha com informações compartilhadas entre as individuais.
 
-## 2.2 Sistema Operacional e Informações Técnicas
+O usuário, por sua vez, corresponde a um cavalo dentro do jogo e precisa inserir um número inteiro pra realizar sua jogada, que será o lançamento de um dado virtual. O cavalo que chegar à linha final primeiro ganha o jogo e o programa é encerrado.
 
-Todo o código foi desenvolvido e testado no 21.0.6 Manjaro Linux e Ubuntu LTS 20.04, usando o compilador GCC.
+## 2.2 Informações Técnicas
 
+Todo o código foi desenvolvido e testado em Manjaro Linux 21.0.6 e Ubuntu LTS 20.04, usando o compilador GCC.

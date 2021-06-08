@@ -26,6 +26,11 @@ typedef struct user_info{
   int* ready
 } user_info;
 
+typedef struct package{
+  int pos[4];
+  int ready;
+}package;
+
 void *handle_connection();
 int playersAreReady(int *players);
 int winner(int *players);
@@ -130,8 +135,6 @@ int main(){
 
 void* handle_connection(void* p_info){
   
-  int byte_len, seed = -1, result;
-  
   user_info info = *(user_info*) p_info;
   free(p_info);
 
@@ -139,8 +142,12 @@ void* handle_connection(void* p_info){
   int client_sock = info.client_socket;
   int id = info.user_id;
   int* pos = info.pos;
-  int* is_ready = info.is_ready;   
-  
+  int* is_ready = info.is_ready; 
+  int* ready = info.ready;
+  int byte_len, seed = 1, result;
+
+
+  package p;
   
   byte_len = send(client_sock, &id, sizeof(int), 0);
 
@@ -148,12 +155,17 @@ void* handle_connection(void* p_info){
   {
     byte_len = recv(client_sock, &seed, sizeof(int), 0);
     
-    srand(seed);
+    srand(result*seed);
     result = rand()%6 + 1;
     pos[id]+=result;
 
-    byte_len = send(client_sock, pos+id, sizeof(int), 0);
-    printf("Client %d new pos = %d, seed = %d, dice_result = %d\n", id, pos[id], seed, result);
+    for(int i=0; i<JOGADORES; i++)
+      p.pos[i] = pos[i];
+    p.ready = *ready;
+
+    byte_len = send(client_sock, &p, sizeof(package), 0);
+    for(int i = 0; i<JOGADORES; i++)
+      printf("Horse %d: pos %d \n", i, pos[i]);
 
   }while (byte_len != (int) 'q');
   

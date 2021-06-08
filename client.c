@@ -10,6 +10,15 @@
 
 #define PORT 8000
 
+#define JOGADORES 4
+#define CASAS 50
+#define LADOS 6
+
+typedef struct package{
+  int pos[4];
+  int ready;
+}package;
+
 int main(){
 
 int client_sock = socket(AF_INET,SOCK_STREAM,0);
@@ -36,7 +45,7 @@ if(connect(client_sock,(struct sockaddr*)&addr,sizeof(addr)) == -1){
   return 1;
 }
 
-printf("Client connected!\n\n");
+printf("Client connected!\n");
 
 int bytes_rec, bytes_send, id, pos=0, seed;
 bytes_rec = recv(client_sock, &id, sizeof(int), 0);
@@ -46,12 +55,16 @@ printf("You are horse %d\n", id);
 while(1){
   do
   {
+    package p;
+
     scanf("%d", &seed);
     bytes_send = send(client_sock, &seed, sizeof(int), 0);
 
     printf("Aguardando todos os jogadores...\n");
 
-    bytes_rec = recv(client_sock, &pos, sizeof(int), 0);
+    bytes_rec = recv(client_sock, &p, sizeof(package), 0);
+    for(int i = 0; i<JOGADORES; i++)
+      printf("Horse %d: pos %d \n", i, p.pos[i]);
     // printf("Your current position is %d\n", pos);
 
     // imprimirJogo(jogadores);

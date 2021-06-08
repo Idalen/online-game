@@ -23,7 +23,8 @@ typedef struct user_info{
   int user_id;
   int* pos;
   int* is_ready; 
-  int* ready
+  int* ready;
+  int* round;
 } user_info;
 
 typedef struct package{
@@ -74,7 +75,9 @@ int main(){
   }
 
   printf("Waiting client to connect on port %d...\n", PORT);
-  int users = 0;
+  
+  
+  int users = 0, round=0;
   int *pos = malloc(JOGADORES*sizeof(int)), *is_ready = malloc(JOGADORES*sizeof(int)), *ready = malloc(sizeof(int));
   memset(pos, 0, sizeof(int)*JOGADORES);
   memset(pos, 0, sizeof(int)*JOGADORES);
@@ -99,6 +102,7 @@ int main(){
     p_info->pos           = pos;
     p_info->is_ready      = is_ready;
     p_info->ready         = ready;
+    p_info->round         = &round;
 
     pthread_t t;
 
@@ -116,7 +120,7 @@ int main(){
 
     // Controls ready state
     if( playersAreReady(is_ready) ) {
-
+      round++;
       *ready = 1;
 
     } else if( !playersAreReady(is_ready) ) {
@@ -144,8 +148,8 @@ void* handle_connection(void* p_info){
   int* pos = info.pos;
   int* is_ready = info.is_ready; 
   int* ready = info.ready;
+  int* round = info.round;
   int byte_len, seed = 1, result;
-
 
   package p;
   
@@ -173,6 +177,8 @@ void* handle_connection(void* p_info){
     p.ready = *ready;
 
     byte_len = send(client_sock, &p, sizeof(package), 0);
+
+    printf("Round %d:\n", *round);
     for(int i = 0; i<JOGADORES; i++)
       printf("Horse %d: pos %d \n", i, pos[i]);
 

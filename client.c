@@ -16,6 +16,8 @@ int client_sock = socket(AF_INET,SOCK_STREAM,0);
 int done=1; 
 struct sockaddr_in addr;
 
+void imprimirJogo(int *jogadores);
+
 if(client_sock == -1){
     printf("Error creating socket\n");
     return 1;
@@ -47,8 +49,12 @@ while(1){
     scanf("%d", &seed);
     bytes_send = send(client_sock, &seed, sizeof(int), 0);
 
+    printf("Aguardando todos os jogadores...\n");
+
     bytes_rec = recv(client_sock, &pos, sizeof(int), 0);
-    printf("Your current position is %d\n", pos);
+    // printf("Your current position is %d\n", pos);
+
+    // imprimirJogo(jogadores);
 
   }while(bytes_rec != -1);
 
@@ -56,3 +62,23 @@ while(1){
 return 0;
 }
 
+void imprimirJogo(int *jogadores) {
+
+  system("clear");
+
+  for(int i=0; i<JOGADORES; i++) {
+
+      for(int j=0; j<CASAS; j++) {
+
+          if(jogadores[i] == j)
+              printf("C%d", i);
+          else
+              printf("-");
+
+      }
+
+      printf("\n");
+
+  }
+
+}

@@ -28,7 +28,7 @@ O presente trabalho é um jogo randomizado de dados para corrida de cavalos. O j
 
 O jogo necessita de 4 clientes conectados para iniciar. O servidor cria uma *thread* para lidar com cada cliente individualmente, enquanto a *main* trabalha com informações compartilhadas entre as individuais.
 
-O usuário, por sua vez, corresponde a um cavalo dentro do jogo e precisa inserir um número inteiro pra realizar sua jogada, que será o lançamento de um dado virtual. O cavalo que chegar à linha final primeiro ganha o jogo e o programa é encerrado.
+O cliente, por sua vez, é um usuário que corresponde a um cavalo dentro do jogo e precisa inserir um número inteiro pra realizar sua jogada, que será o lançamento de um dado virtual. O cavalo que chegar à linha final primeiro ganha o jogo e o programa é encerrado.
 
 ## 2.2 Informações Técnicas
 

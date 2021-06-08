@@ -13,8 +13,8 @@
 #define PORT 8000
 #define MAXLINE 4096
 
-#define JOGADORES 2
-#define CASAS 20
+#define JOGADORES 4
+#define CASAS 30
 #define LADOS 6
 
 typedef struct user_info{
@@ -125,7 +125,6 @@ int main(){
 
     // Controls ready state
     if( playersAreReady(is_ready) && *ready == 0) {
-      printf("AA\n");
       round++;
       *ready = 1;
 
@@ -139,7 +138,14 @@ int main(){
 
   }while(*win == -1); 
 
-  printf("Vencedor: %d\n", *win);
+  printf("Winner: %d\n", *win);
+
+  printf("Terminating the game");
+  for(int i=0; i<3; i++){
+    printf(".");
+    sleep(3);
+  }
+  printf("\n");
 
   free(pos);
   free(is_ready);

@@ -10,8 +10,8 @@
 
 #define PORT 8000
 
-#define JOGADORES 2
-#define CASAS 15
+#define JOGADORES 4
+#define CASAS 30
 #define LADOS 6
 
 typedef struct package{

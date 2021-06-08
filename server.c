@@ -33,6 +33,7 @@ typedef struct package{
 
 void *handle_connection();
 int playersAreReady(int *players);
+int playersArentReady(int *players);
 int winner(int *players);
 
 int main(){
@@ -119,7 +120,7 @@ int main(){
 
       *ready = 1;
 
-    } else if( !playersAreReady(is_ready) ) {
+    } else if( playersArentReady(is_ready) ) {
 
       *ready = 0;
 
@@ -187,6 +188,18 @@ int playersAreReady(int *players) {
   for(int i=0; i<JOGADORES; i++) {
 
     if( !players[i] ) return 0;
+
+  }
+
+  return 1;
+
+}
+
+int playersArentReady(int *players) {
+
+  for(int i=0; i<JOGADORES; i++) {
+
+    if( players[i] ) return 0;
 
   }
 

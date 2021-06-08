@@ -26,14 +26,10 @@ O trabalho funciona atualmente como um jogo randomizado de dados para corrida de
 
 ## 2.1 Funcionamento do jogo
 
-O jogo aceita exatamente 4 jogadores. O servidor trata o gerenciamento das threads e os inputs de cada jogador.
+O jogo necessita de 4 clientes conectados para iniciar. Para cada cliente, o servidor cria uma nova thread para lidar com cada cliente individualmente, enquanto a thread main lida com informações compartilhadas entre as threads.
+O jogo consiste em uma corrida de cavalos -- cada cavalo sendo um usuário. O usuário precisa inserir um número inteiro pra realizar sua jogada, que será o lançamento virtual de um dado. O cavalo que chegar à linha final primeiro ganha o jogo e o programa é encerrado (ainda com alguns bugs).
 
 ## 2.2 Sistema Operacional e Informações Técnicas
 
-Produzido no Linux, Kernel: 5.9.16-1-MANJARO x86_64.
+Todo o código foi desenvolvido e testado no 21.0.6 Manjaro Linux e Ubuntu LTS 20.04, usando o compilador GCC.
 
-Feito em Linguagem C, com compilador GCC.
-
-## 2.3 Conexão e transmissão de informações
-
-Para a transmissão das informações, foi usado o protocolo TCP/IP.

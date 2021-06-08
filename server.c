@@ -164,14 +164,13 @@ void* handle_connection(void* p_info){
     result = rand()%6 + 1;
 
     is_ready[id] = 1;
-    
+    pos[id]+=result;
+
     while( !(*ready) ) {
 
       // wait
 
     }
-    
-    pos[id]+=result;
 
     for(int i=0; i<JOGADORES; i++)
       p.pos[i] = pos[i];

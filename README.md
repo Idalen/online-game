@@ -30,6 +30,6 @@ O jogo necessita de 4 clientes conectados para iniciar. O servidor cria uma *thr
 
 O cliente, por sua vez, é um usuário que corresponde a um cavalo dentro do jogo e precisa inserir um número inteiro pra realizar sua jogada, que será o lançamento de um dado virtual. O cavalo que chegar à linha final primeiro ganha o jogo e o programa é encerrado.
 
-## 2.2 Informações Técnicas
+## 2.2 Informações técnicas
 
 Todo o código foi desenvolvido e testado em Manjaro Linux 21.0.6 e Ubuntu LTS 20.04, usando o compilador GCC.

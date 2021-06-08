@@ -13,8 +13,8 @@
 #define PORT 8000
 #define MAXLINE 4096
 
-#define JOGADORES 4
-#define CASAS 50
+#define JOGADORES 2
+#define CASAS 20
 #define LADOS 6
 
 typedef struct user_info{
@@ -25,11 +25,13 @@ typedef struct user_info{
   int* is_ready; 
   int* ready;
   int* round;
+  int* win;
 } user_info;
 
 typedef struct package{
   int pos[4];
   int ready;
+  int win;
 }package;
 
 void *handle_connection();
@@ -79,10 +81,11 @@ int main(){
   
   
   int users = 0, round=0;
-  int *pos = malloc(JOGADORES*sizeof(int)), *is_ready = malloc(JOGADORES*sizeof(int)), *ready = malloc(sizeof(int));
+  int *pos = malloc(JOGADORES*sizeof(int)), *is_ready = malloc(JOGADORES*sizeof(int)), *ready = malloc(sizeof(int)), *win = malloc(sizeof(int));
   memset(pos, 0, sizeof(int)*JOGADORES);
   memset(pos, 0, sizeof(int)*JOGADORES);
   *ready = 0;
+  *win = -1;
 
   while(users < JOGADORES){
 
@@ -104,6 +107,7 @@ int main(){
     p_info->is_ready      = is_ready;
     p_info->ready         = ready;
     p_info->round         = &round;
+    p_info->win           = win;
 
     pthread_t t;
 
@@ -117,22 +121,30 @@ int main(){
   printf("Jogo iniciado\n");
 
   // Runs while there is no winner
-  while( winner(pos) == -1 ) {
+  do{
 
     // Controls ready state
-    if( playersAreReady(is_ready) ) {
+    if( playersAreReady(is_ready) && *ready == 0) {
+      printf("AA\n");
       round++;
       *ready = 1;
 
-    } else if( playersArentReady(is_ready) ) {
+    } else if( playersArentReady(is_ready) && *ready==1) {
 
       *ready = 0;
 
     }
 
-  }
+    *win = winner(pos);
 
-  printf("Vencedor: %d\n", winner(pos));
+  }while(*win == -1); 
+
+  printf("Vencedor: %d\n", *win);
+
+  free(pos);
+  free(is_ready);
+  free(ready);
+  free(win);
 
   return 0;
 
@@ -151,6 +163,7 @@ void* handle_connection(void* p_info){
   int* ready = info.ready;
   int* round = info.round;
   int byte_len, seed = 1, result;
+  int* win = info.win;
 
   package p;
   
@@ -160,7 +173,7 @@ void* handle_connection(void* p_info){
   {
     byte_len = recv(client_sock, &seed, sizeof(int), 0);
     
-    srand(result*seed);
+    srand((result+client_sock)*seed);
     result = rand()%6 + 1;
 
     is_ready[id] = 1;
@@ -175,6 +188,7 @@ void* handle_connection(void* p_info){
     for(int i=0; i<JOGADORES; i++)
       p.pos[i] = pos[i];
     p.ready = *ready;
+    p.win = *win;
 
     byte_len = send(client_sock, &p, sizeof(package), 0);
 
@@ -184,7 +198,7 @@ void* handle_connection(void* p_info){
 
     is_ready[id] = 0;
 
-  }while (byte_len != (int) 'q');
+  }while (*win == -1);
   
 }
 

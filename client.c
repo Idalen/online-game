@@ -10,13 +10,14 @@
 
 #define PORT 8000
 
-#define JOGADORES 4
-#define CASAS 50
+#define JOGADORES 2
+#define CASAS 15
 #define LADOS 6
 
 typedef struct package{
   int pos[4];
   int ready;
+  int win;
 }package;
 
 int main(){
@@ -52,24 +53,26 @@ bytes_rec = recv(client_sock, &id, sizeof(int), 0);
 
 printf("You are horse %d\n", id);
 
-while(1){
-  do
-  {
-    package p;
+package p;
+do
+{
+  printf("Insira tua jogada:\n");
+  scanf("%d", &seed);
+  
+  bytes_send = send(client_sock, &seed, sizeof(int), 0);
+  printf("Aguardando todos os jogadores...\n");
+  bytes_rec = recv(client_sock, &p, sizeof(package), 0);
+  
+  // printf("Your current position is %d\n", pos);
+  imprimirJogo(p.pos);
 
-    scanf("%d", &seed);
-    bytes_send = send(client_sock, &seed, sizeof(int), 0);
+}while(p.win == -1);
 
-    printf("Aguardando todos os jogadores...\n");
+if(p.win == id)
+  printf("YOU WIN!!!!!!\n");
+else
+  printf("DERROTA\n");  
 
-    bytes_rec = recv(client_sock, &p, sizeof(package), 0);
-    // printf("Your current position is %d\n", pos);
-
-    imprimirJogo(p.pos);
-
-  }while(bytes_rec != -1);
-
-}
 return 0;
 }
 

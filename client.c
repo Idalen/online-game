@@ -18,9 +18,9 @@
 #define LADOS 6
 
 // Struct do package, contendo:
-//  - int[4] para as 4 posicoes de cada um dos jogadores
-//  - int ready que serve como flag de prontidao
-//  - int win que demarca vitoria no jogo
+//    int[4] para as 4 posicoes de cada um dos jogadores
+//    int ready que serve como flag de prontidao
+//    int win que demarca vitoria no jogo
 typedef struct package
 {
   int pos[4];
@@ -28,12 +28,12 @@ typedef struct package
   int win;
 } package;
 
-// Funcao de imprimir os detalhes do jogo na tela para o cliente
-//  INPUT: void
-//  OUTPUT: void (jogo-cliente eh tratado inteiramente dentro da main)
+// Funcao main para gerenciar as interacoes do cliente
+//    INPUT: void
+//    OUTPUT: void (jogo-cliente eh tratado inteiramente dentro da main)
 int main()
 {
-  // Inicializando as variaveis para conexao
+  // Inicializando as variaveis para conexao do cliente
   int client_sock = socket(AF_INET, SOCK_STREAM, 0);
   struct sockaddr_in addr;
   int done = 1;
@@ -93,8 +93,8 @@ int main()
 }
 
 // Funcao de imprimir os detalhes do jogo na tela
-//  INPUT: vetor de jogadores
-//  OUTPUT: void (os prints sao feitos dentro da funcao)
+//    INPUT: vetor de jogadores
+//    OUTPUT: void (os prints sao feitos dentro da funcao)
 void imprimirJogo(int *jogadores)
 {
 

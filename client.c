@@ -63,11 +63,9 @@ while(1){
     printf("Aguardando todos os jogadores...\n");
 
     bytes_rec = recv(client_sock, &p, sizeof(package), 0);
-    for(int i = 0; i<JOGADORES; i++)
-      printf("Horse %d: pos %d \n", i, p.pos[i]);
     // printf("Your current position is %d\n", pos);
 
-    // imprimirJogo(jogadores);
+    imprimirJogo(p.pos);
 
   }while(bytes_rec != -1);
 

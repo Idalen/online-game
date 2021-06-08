@@ -115,11 +115,11 @@ int main(){
   while( winner(pos) == -1 ) {
 
     // Controls ready state
-    if( playersAreReady(ready) && !(*ready) ) {
+    if( playersAreReady(is_ready) ) {
 
       *ready = 1;
 
-    } else if( !playersAreReady(ready) && (*ready) ) {
+    } else if( !playersAreReady(is_ready) ) {
 
       *ready = 0;
 
@@ -157,6 +157,15 @@ void* handle_connection(void* p_info){
     
     srand(result*seed);
     result = rand()%6 + 1;
+
+    is_ready[id] = 1;
+    
+    while( !(*ready) ) {
+
+      // wait
+
+    }
+    
     pos[id]+=result;
 
     for(int i=0; i<JOGADORES; i++)
@@ -166,6 +175,8 @@ void* handle_connection(void* p_info){
     byte_len = send(client_sock, &p, sizeof(package), 0);
     for(int i = 0; i<JOGADORES; i++)
       printf("Horse %d: pos %d \n", i, pos[i]);
+
+    is_ready[id] = 0;
 
   }while (byte_len != (int) 'q');
   

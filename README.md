@@ -14,7 +14,7 @@ Marcus Vinicius Santos Rodrigues - 11218862
 
 ## 1.1 Sobre o trabalho
 
-
+O trabalho funciona atualmente como um jogo randomizado de dados para corrida de cavalos. Como um jogador, você pode inserir uma seed para seu dado ser randomizado, e esse dado ira definir quanto seu cavalo ira avancar na pista de corrida. O primeiro cavalo que chegar ao final ganha o jogo, e o jogo subsequentemente termina.
 
 ## 1.2 Como instalar
 
@@ -25,12 +25,13 @@ Marcus Vinicius Santos Rodrigues - 11218862
 
 ## 2.1 Funcionamento do jogo
 
+O jogo aceita exatamente 4 jogadores. O servidor trata o gerenciamento das threads de cada jogador, e os inputs dos mesmos.
 
+## 2.2 Sistema Operacional e Informações Técnicas
 
-## 2.2 Conexão e transmissão de informações
+Produzido no Linux, Kernel: 5.9.16-1-MANJARO x86_64
+Feito em Linguagem C, compilador GCC
 
-
-
-# 3. Conclusões
+## 2.3 Conexão e transmissão de informações
 
 
